@@ -1,4 +1,11 @@
+
+
 use serde::{Deserialize, Serialize};
+use actix_web::{web, HttpResponse, HttpServer, App};
+use uuid::Uuid;
+use dotenv::dotenv;
+use std::env;
+
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Point {
@@ -6,18 +13,30 @@ struct Point {
     y: i32,
 }
 
-fn main() {
-    let point = Point { x: 1, y: 2 };
 
-    // Convert the Point to a JSON string.
-    let serialized = serde_json::to_string(&point).unwrap();
 
-    // Prints serialized = {"x":1,"y":2}
-    println!("serialized = {}", serialized);
 
-    // Convert the JSON string back to a Point.
-    let deserialized: Point = serde_json::from_str(&serialized).unwrap();
+async fn hello_world() -> HttpResponse
+{
+    HttpResponse::Ok().json("Hello World")
+}
 
-    // Prints deserialized = Point { x: 1, y: 2 }
-    println!("deserialized = {:?}", deserialized);
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+
+    dotenv().ok();
+    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+
+    println!("Server running at http://{}:{}", host, port);
+    // Create and run the HTTP server
+    HttpServer::new(|| {
+        App::new()
+            // Define a route: GET requests to "/" will be handled by hello_world
+            .route("/", web::get().to(hello_world))
+    })
+    // Bind the server to listen on localhost:8080
+    .bind(format!("{}:{}", host, port))?
+    .run()
+    .await
 }

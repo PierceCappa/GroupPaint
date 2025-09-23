@@ -1,0 +1,14 @@
+<div>
+  <label>Color: <input type="color" [value]="color" (input)="setColor($event)"></label>
+  <label>Pen Width: <input type="range" min="1" max="20" [value]="penWidth" (input)="setPenWidth($event)"></label>
+  <label><button onclick="clearCanvas()">Clear</button> </label>
+</div>
+<canvas #canvas
+  [width]="width"
+  [height]="height"
+  style="border:1px solid #000; image-rendering: pixelated; cursor: crosshair;"
+  (mousedown)="onMouseDown($event)"
+  (mouseup)="onMouseUp()"
+  (mouseleave)="onMouseUp()"
+  (mousemove)="onMouseMove($event)">
+</canvas>
